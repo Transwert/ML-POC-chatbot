@@ -5,7 +5,7 @@ import random
 from datetime import datetime, timedelta
 
 class HealthcareDataGenerator:
-    def __init__(self, output_dir="data", num_records=100, save_as_sql=False):
+    def __init__(self, output_dir="../data", num_records=1000, save_as_sql=False):
         self.output_dir = output_dir
         self.num_records = num_records
         self.save_as_sql = save_as_sql
@@ -297,7 +297,6 @@ class HealthcareDataGenerator:
             "uploaded_by": random.randint(1, self.num_records // 2)
         } for i in range(1, self.num_records)])
         self._save_or_append_csv(df, "document_uploads.csv", "document_uploads")
-        
 
-import ace_tools as tools; 
-tools.display_dataframe_to_user(name="Healthcare Data Generator Script", dataframe=pd.DataFrame({"Module": ["HealthcareDataGenerator"], "Functions Included": ["All 20 tables generation + CSV/SQL output"]}))
+gen = HealthcareDataGenerator(num_records=1000, save_as_sql=False)
+gen.generate_and_save_all()

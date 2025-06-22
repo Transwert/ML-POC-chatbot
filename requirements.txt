@@ -1,2 +1,6 @@
 ace-tools
 faker
+pandas
+fastapi
+uvicorn
+python-dotenv
