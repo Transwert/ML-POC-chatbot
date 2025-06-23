@@ -6,13 +6,14 @@ import pandas as pd
 from dotenv import load_dotenv
 import uvicorn
 
+from ai_service import AIService
 # Load .env variables
 load_dotenv()
 DB_PATH = os.getenv("DB_PATH", "./data/hospital_data.db")
 SQL_DUMP_PATH = os.getenv("SQL_DUMP_PATH", "./data/data_dump.sql")
 DATA_FOLDER = os.getenv("DATA_FOLDER", "./data")
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
-API_PORT = int(os.getenv("API_PORT", 8000))
+API_PORT = int(os.getenv("BE_PORT", 8000))
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
 
 app = FastAPI()
@@ -254,6 +255,9 @@ class SQLQuery(BaseModel):
     query: str
     force_initialize: bool = False
 
+class NL2SQL_data(BaseModel):
+    userInput: str
+
 # ------------- Main Endpoints ------------------
 @app.post("/execute")
 async def execute_sql(sql_query: SQLQuery):
@@ -286,6 +290,24 @@ async def execute_sql(sql_query: SQLQuery):
 async def initialize(force: bool = True):
     initialize_sample_db(force_initialize=force)
     return {"status": "initialized", "forced": force}
+
+ai_service =  AIService()
+@app.post("/NL2SQL")
+async def naturalLanguageToSqlQuery (data: NL2SQL_data):
+    try:
+        output = ai_service.generate_sql_query(natural_language_prompt=data.userInput)
+        return output
+    except Exception as e:
+        print("Error: problem in generating data from query!")
+        return e
+    
+@app.post("/intent_classify")
+async def intentClassify (data: NL2SQL_data):
+    try:
+        output = ai_service.detect_intent(user_input=data.userInput)
+        return output
+    except Exception as e:
+        return e
 
 # ------------- Main Entry ----------------------
 if __name__ == "__main__":

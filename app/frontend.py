@@ -27,7 +27,7 @@ def start_gradio_chat_ui():
         msg.submit(lambda: "", None, msg)
 
     port = int(os.getenv("FE_PORT", 8080))
-    demo.launch(server_name="0.0.0.0", server_port=port)
+    demo.launch(server_name="0.0.0.0", server_port=port, share=False)
 
 if __name__ == "__main__":
     start_gradio_chat_ui()
